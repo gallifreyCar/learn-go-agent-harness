@@ -5,6 +5,30 @@
 //
 // MCP 是 Anthropic 提出的标准协议，用于连接 AI 模型与外部工具
 //
+// ┌─────────────────────────────────────────────────────┐
+// │                   MCP 协议架构                       │
+// │                                                     │
+// │   +----------------+        stdin/stdout        +----------------+
+// │   |   MCP Client   | <-----------------------> |   MCP Server   |
+// │   |    (Agent)     |    JSON-RPC 2.0 消息      |   (Tools)      |
+// │   +----------------+                           +----------------+
+// │          |                                            |
+// │          | 1. initialize                              |
+// │          | 2. tools/list   --> 获取工具列表            |
+// │          | 3. tools/call   --> 调用工具               |
+// │          |                                            |
+// │          v                                            |
+// │   +----------------+                           +----------------+
+// │   |   LLM (Claude) |                           |  External Tool |
+// │   +----------------+                           +----------------+
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   type MCPClient struct { cmd, stdin, stdout }
+//   client.Initialize()  // 建立连接
+//   tools := client.ListTools()  // 发现工具
+//   result := client.CallTool("bash", {"command": "ls"})
+//
 // 运行方式：
 //   go run main.go
 package main

@@ -1,7 +1,39 @@
 // s10-coordinator: 多 Agent 协调
 //
 // 目标：理解如何协调多个 Agent 并行工作
-// 核心概念：Coordinator + Workers + 任务分发
+// 核心概念：Coordinator + Workers + 任务分发 + 结果聚合
+//
+// ┌─────────────────────────────────────────────────────┐
+// │                多 Agent 协调架构                      │
+// │                                                     │
+// │   +-------------+                                   │
+// │   | Coordinator |                                   │
+// │   +------+------+
+// │          |                                          │
+// │     任务分发                                        │
+// │          |                                          │
+// │   +------+------+------+------+
+// │   |      |      |      |      |                     │
+// │   v      v      v      v      v                     │
+// │ Agent1  Agent2  Agent3  Agent4  ...                 │
+// │   |      |      |      |      |                     │
+// │   +------+------+------+------+
+// │          |                                          │
+// │     结果聚合                                        │
+// │          |                                          │
+// │          v                                          │
+// │   +-------------+                                   │
+// │   |Final Result|                                   │
+// │   +-------------+                                   │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   type Coordinator struct { workers []*Worker, tasks chan Task }
+//   func (c *Coordinator) Run(tasks []Task) []*Result {
+//     for _, w := range c.workers { go w.Run(c.tasks, c.results) }
+//     for _, t := range tasks { c.tasks <- t }
+//     return collect(c.results)
+//   }
 //
 // 运行方式：
 //   export OPENAI_API_KEY=your-key

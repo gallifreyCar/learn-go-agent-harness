@@ -1,12 +1,32 @@
 // s02-api-client: API 客户端抽象
 //
 // 目标：理解如何抽象 LLM API，支持多 Provider
-// 核心概念：接口定义 + 多实现
+// 核心概念：接口定义 + 工厂模式 + 多实现
+//
+// ┌─────────────────────────────────────────────────────┐
+// │                 Provider 接口抽象                    │
+// │                                                     │
+// │   +------------------+                              │
+// │   |     Provider     |  <-- 统一接口                │
+// │   +------------------+                              │
+// │     | Name()        |                              │
+// │     | Complete()    |                              │
+// │   +------------------+                              │
+// │         ^         ^         ^                       │
+// │         |         |         |                       │
+// │   +-----+--+ +----+---+ +---+----+                  │
+// │   | OpenAI | |Anthropic| | Ollama |                 │
+// │   +--------+ +---------+ +--------+                 │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   type Provider interface { Name(), Complete() }
+//   func CreateProvider(name string) Provider
+//   provider := CreateProvider("openai")
+//   response, _ := provider.Complete(ctx, messages)
 //
 // 运行方式：
-//   export OPENAI_API_KEY=your-key     # OpenAI
-//   export ANTHROPIC_API_KEY=your-key  # Anthropic (可选)
-//   export OLLAMA_HOST=http://localhost:11434  # Ollama (可选)
+//   export OPENAI_API_KEY=your-key
 //   go run main.go -provider openai
 package main
 

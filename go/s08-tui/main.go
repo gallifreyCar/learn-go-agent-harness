@@ -1,7 +1,33 @@
 // s08-tui: TUI 交互界面
 //
 // 目标：理解如何为 Agent 构建 TUI 界面
-// 核心概念：bubbletea + lipgloss
+// 核心概念：bubbletea (Model-Update-View) + lipgloss (样式)
+//
+// ┌─────────────────────────────────────────────────────┐
+// │                Bubbletea 架构                        │
+// │                                                     │
+// │   +-------+     +-------+     +------+              │
+// │   |  Msg  | --> | Update | --> | Model|              │
+// │   +-------+     +-------+     +------+              │
+// │                     |                               │
+// │                     v                               │
+// │               +-------+                             │
+// │               |  View  |                            │
+// │               +-------+                             │
+// │                     |                               │
+// │                     v                               │
+// │               Terminal Output                       │
+// │                                                     │
+// │   Model: 应用状态                                   │
+// │   Update(msg) (Model, Cmd): 处理消息，更新状态      │
+// │   View() string: 渲染界面                          │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   type Model struct { messages []Message, input textinput.Model }
+//   func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd)
+//   func (m Model) View() string
+//   tea.NewProgram(initialModel).Run()
 //
 // 运行方式：
 //   go run main.go

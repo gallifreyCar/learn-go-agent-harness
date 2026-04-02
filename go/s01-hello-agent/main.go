@@ -4,6 +4,25 @@
 // 这个示例展示最基础的 Agent：发送消息，获取响应
 // 使用标准库 http 客户端，无第三方依赖
 //
+// ┌─────────────────────────────────────────────────────┐
+// │                   Agent = LLM + Loop                 │
+// │                                                     │
+// │   +--------+      +-------+      +--------+        │
+// │   |  User  | ---> |  LLM  | ---> | Result |        │
+// │   +--------+      +---+---+      +--------+        │
+// │                       ^                |            │
+// │                       |   messages[]   |            │
+// │                       +----------------+            │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   messages = [system prompt]
+//   loop:
+//     append user input
+//     response = call LLM API
+//     append assistant response
+//     print response
+//
 // 运行方式：
 //   export OPENAI_API_KEY=your-key
 //   go run main.go

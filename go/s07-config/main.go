@@ -1,7 +1,31 @@
 // s07-config: 配置管理
 //
 // 目标：理解 Agent 的配置系统设计
-// 核心概念：viper + 环境变量 + 配置文件
+// 核心概念：viper + 环境变量 + 配置文件 + 优先级
+//
+// ┌─────────────────────────────────────────────────────┐
+// │                  配置优先级（从高到低）               │
+// │                                                     │
+// │   1. 环境变量  OPENAI_API_KEY=xxx                   │
+// │          |                                         │
+// │   2. 命令行参数  --provider=openai                  │
+// │          |                                         │
+// │   3. 配置文件  config.yaml                          │
+// │          |                                         │
+// │   4. 默认值  SetDefault("model", "gpt-4o")          │
+// │          |                                         │
+// │          v                                         │
+// │   +------------------+                              │
+// │   |     Config       |                              │
+// │   +------------------+                              │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   viper.SetDefault("model", "gpt-4o-mini")
+//   viper.SetConfigName("config")
+//   viper.ReadInConfig()
+//   viper.AutomaticEnv()  // 环境变量覆盖
+//   model := viper.GetString("model")
 //
 // 运行方式：
 //   go run main.go

@@ -1,7 +1,31 @@
 // s04-tool-interface: 工具接口定义
 //
 // 目标：理解 Agent 的工具系统设计
-// 核心概念：Tool 接口 + JSON Schema 参数验证
+// 核心概念：Tool 接口 + JSON Schema 参数验证 + 注册表模式
+//
+// ┌─────────────────────────────────────────────────────┐
+// │                   Tool 接口设计                      │
+// │                                                     │
+// │   +------------------+                              │
+// │   |      Tool        |  <-- 统一接口                │
+// │   +------------------+                              │
+// │     | Name()        |                              │
+// │     | Description() |                              │
+// │     | InputSchema() |  JSON Schema                 │
+// │     | Execute()     |                              │
+// │   +------------------+                              │
+// │         ^         ^         ^                       │
+// │         |         |         |                       │
+// │   +-----+--+ +----+---+ +---+----+                  │
+// │   |  Bash  | |  Read  | | Write  |                  │
+// │   +--------+ +--------+ +--------+                  │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   type Tool interface { Name(), Description(), InputSchema(), Execute() }
+//   registry.Register(&BashTool{})
+//   tool := registry.Get("bash")
+//   result := tool.Execute(ctx, input)
 //
 // 运行方式：
 //   export OPENAI_API_KEY=your-key

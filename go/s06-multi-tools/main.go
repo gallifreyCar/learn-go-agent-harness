@@ -3,6 +3,41 @@
 // 目标：理解完整的多工具系统设计
 // 核心概念：工具注册表 + 并行执行 + 结果聚合
 //
+// ┌─────────────────────────────────────────────────────┐
+// │                  多工具并行执行                       │
+// │                                                     │
+// │   ToolCalls: [bash, read, write]                    │
+// │                                                     │
+// │   +-------+   +-------+   +-------+                 │
+// │   | bash  |   | read  |   | write |                 │
+// │   +---+---+   +---+---+   +---+---+                 │
+// │       |           |           |                     │
+// │       v           v           v                     │
+// │   goroutine   goroutine   goroutine                 │
+// │       |           |           |                     │
+// │       +-----+-----+-----+-----+                     │
+// │             |                                       │
+// │             v                                       │
+// │       WaitGroup.Wait()                              │
+// │             |                                       │
+// │             v                                       │
+// │       map[id]Result                                 │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   var wg sync.WaitGroup
+//   for _, call := range calls {
+//     wg.Add(1)
+//     go func(c ToolCall) {
+//       defer wg.Done()
+//       result := tool.Execute(c)
+//       mu.Lock()
+//       results[c.ID] = result
+//       mu.Unlock()
+//     }(call)
+//   }
+//   wg.Wait()
+//
 // 运行方式：
 //   export OPENAI_API_KEY=your-key
 //   go run main.go

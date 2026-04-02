@@ -3,6 +3,35 @@
 // 目标：理解 Agent 的核心 - ReAct 循环
 // 核心概念：LLM 决定调用工具 → 执行 → 结果反馈 → 继续推理
 //
+// ┌─────────────────────────────────────────────────────┐
+// │                   Agent Loop                         │
+// │                                                     │
+// │   messages[] ──► LLM ──► response                   │
+// │                      │                              │
+// │               stop_reason?                          │
+// │              /            \                         │
+// │         tool_calls        text                      │
+// │             │              │                         │
+// │             ▼              ▼                         │
+// │       Execute Tools    Return to User               │
+// │       Append Results                                │
+// │             │                                        │
+// │             └──────────► messages[]                 │
+// └─────────────────────────────────────────────────────┘
+//
+// 核心模式：
+//   for {
+//     response := llm.CreateMessage(messages, tools)
+//     if response.FinishReason == "tool_calls" {
+//       for _, call := range response.ToolCalls {
+//         result := tool.Execute(call)
+//         messages = append(messages, result)
+//       }
+//       continue
+//     }
+//     return response.Content
+//   }
+//
 // 运行方式：
 //   export OPENAI_API_KEY=your-key
 //   go run main.go "列出当前目录的文件"
