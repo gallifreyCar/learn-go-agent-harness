@@ -17,17 +17,17 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-sm z-10 border-b border-gray-200">
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-sm z-10 border-b border-gray-200 dark:bg-slate-950/80 dark:border-slate-800">
           <div className="max-w-6xl mx-auto flex justify-between items-center px-4">
             <a href="/" className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Learn Go Agent
             </a>
-            <div className="flex gap-6 text-sm">
-              <a href="/lessons" className="hover:text-purple-600">课程</a>
-              <a href="/architecture" className="hover:text-purple-600">架构</a>
+            <div className="flex gap-6 text-sm text-gray-700 dark:text-slate-200">
+              <a href="/lessons" className="hover:text-purple-600 dark:hover:text-purple-400">课程</a>
+              <a href="/architecture" className="hover:text-purple-600 dark:hover:text-purple-400">架构</a>
               <a
                 href="https://github.com/gallifreyCar/learn-go-agent-harness"
-                className="hover:text-gray-600"
+                className="hover:text-gray-600 dark:hover:text-slate-300"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -39,13 +39,13 @@ export default function RootLayout({
         <main className="pt-20 pb-10 min-h-screen">
           {children}
         </main>
-        <footer className="fixed bottom-0 left-0 right-0 h-8 bg-white border-t border-gray-200">
-          <div className="max-w-6xl mx-auto text-center text-sm text-gray-500">
+        <footer className="fixed bottom-0 left-0 right-0 h-8 bg-white border-t border-gray-200 dark:bg-slate-950 dark:border-slate-800">
+          <div className="max-w-6xl mx-auto text-center text-sm text-gray-500 dark:text-slate-400">
             <p>
               Inspired by{' '}
-              <a href="https://claude.ai/code" className="text-purple-600 hover:underline">Claude Code</a>
+              <a href="https://claude.ai/code" className="text-purple-600 hover:underline dark:text-purple-400">Claude Code</a>
               {' '}and{' '}
-              <a href="https://github.com/shareAI-lab/learn-claude-code" className="text-purple-600 hover:underline">learn-claude-code</a>
+              <a href="https://github.com/shareAI-lab/learn-claude-code" className="text-purple-600 hover:underline dark:text-purple-400">learn-claude-code</a>
             </p>
           </div>
         </footer>

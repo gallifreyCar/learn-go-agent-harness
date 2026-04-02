@@ -24,16 +24,16 @@ export default function LessonsPage() {
                 <Link
                   key={lesson.id}
                   href={`/lessons/${lesson.id}`}
-                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition"
+                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition dark:bg-slate-900 dark:border-slate-700 dark:hover:border-purple-500"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-sm text-purple-600 bg-purple-50 px-2 py-1 rounded">
+                    <span className="font-mono text-sm text-purple-600 bg-purple-50 px-2 py-1 rounded dark:bg-purple-500/10 dark:text-purple-300">
                       {lesson.id}
                     </span>
-                    <span className="text-xs text-gray-400">{lesson.phase}</span>
+                    <span className="text-xs text-gray-400 dark:text-slate-500">{lesson.phase}</span>
                   </div>
                   <h3 className="font-semibold mt-2">{lesson.title}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{lesson.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">{lesson.description}</p>
                 </Link>
               ))}
           </div>
