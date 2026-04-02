@@ -1,63 +1,49 @@
-# s01-hello-agent: 最小 Agent
+# s02: 多 Provider 支持
 
-> One loop & API call is all you need
+> _"加一个 Provider，只加一个实现"_
 
-## 目标
-
-理解 Agent 的本质：一个调用 LLM API 的对话循环。
-
-## 核心概念
-
-```
-┌──────────────────────────────────────┐
-│              Agent 本质              │
-│                                      │
-│   User Input → API Call → Response   │
-│        ↑                        │    │
-│        └────────────────────────┘    │
-│              (循环)                   │
-└──────────────────────────────────────┘
-```
-
-## 代码结构
-
-```go
-// 1. 创建客户端
-client := openai.NewClient(option.WithAPIKey(apiKey))
-
-// 2. 初始化消息
-messages := []Message{SystemMessage("你是一个助手")}
-
-// 3. 对话循环
-for {
-    messages = append(messages, UserMessage(input))
-
-    completion := client.Chat.Completions.New(ctx, Params{
-        Model:    "gpt-4o",
-        Messages: messages,
-    })
-
-    response := completion.Choices[0].Message.Content
-    messages = append(messages, AssistantMessage(response))
-}
-```
+本课展示如何抽象 API 客户端，支持多个 Provider。
 
 ## 运行
 
 ```bash
-# 设置 API Key
-export OPENAI_API_KEY=your-key
+cd go/s02-api-client
+export OPENAI_API_KEY=your-key        # OpenAI
+export ANTHROPIC_API_KEY=your-key   # Anthropic (可选)
+export OLLAMA_HOST=http://localhost:11434  # Ollama (可选)
 
-# 运行
-go run main.go
+go run main.go -provider openai    # 使用 OpenAI
+go run main.go -provider anthropic  # 使用 Anthropic
+go run main.go -provider ollama    # 使用 Ollama
+```
+
+## 代码结构
+```
+s02-api-client/
+├── main.go       # 主程序
+├── client.go      # API 客户端接口
+└── README.md      # 本文件
+```
+
+## 核心代码
+```go
+// Provider 接口
+type Provider interface {
+    Name() string
+    Complete(ctx, messages) (string, error)
+}
+
+// 实现
+type OpenAIProvider struct { ... }
+type AnthropicProvider struct { ... }
+type OllamaProvider struct { ... }
 ```
 
 ## 学习要点
 
-1. **消息历史**：Agent 需要记住对话上下文
-2. **API 调用**：使用 OpenAI SDK 发送请求
-3. **角色区分**：system / user / assistant 三种角色
+1. **接口抽象**：Provider 接口屏蔽 API 差异
+2. **工厂模式**：根据配置创建 Provider
+3. **多后端支持**：OpenAI、Anthropic、Ollama
 
 ## 下一课
-
-[s02-api-client](../s02-api-client) - 抽象 API 客户端，支持多 Provider
+[s03-streaming](../s03-streaming) - 流式响应

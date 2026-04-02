@@ -1,41 +1,48 @@
-# s08-tui: TUI 交互界面
+# s09: Prompt 系统
 
-> 界面要好看，bubbletea 是首选
+> _"Prompt 要分层，缓存边界要清晰"_
 
-## 目标
-
-为 Agent 构建交互式 TUI 界面，提升用户体验。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────┐
-│            Bubbletea 架构                    │
-│                                             │
-│  Model ──► Update(msg) ──► Model           │
-│              │                              │
-│              ▼                              │
-│            View() ──► 渲染输出              │
-└─────────────────────────────────────────────┘
-```
+本课展示如何设计 System Prompt 管理系统。
 
 ## 运行
-
 ```bash
+cd go/s09-prompt-system
 go run main.go
 ```
 
-## 操作
+## 代码结构
+```
+s09-prompt-system/
+├── main.go      # 主程序
+└── README.md     # 本文件
+```
 
-- **Enter**: 发送消息
-- **Esc/Ctrl+C**: 退出
+## 核心代码
+```go
+// Prompt 优先级
+const (
+    LevelOverride   PromptLevel = 00  // 强制覆盖
+    LevelCoordinator PromptLevel = 1    // 协调模式
+    LevelAgent      PromptLevel = 2    // 子 Agent
+    LevelCustom     PromptLevel = 3    // 用户自定义
+    LevelDefault    PromptLevel = 4    // 默认
+)
+
+// Prompt 管理
+type PromptManager struct {
+    sections []PromptSection
+    boundary string
+}
+
+func (m *PromptManager) Build() string {
+    // 按优先级组合 Prompt
+}
+```
 
 ## 学习要点
-
-1. **Bubbletea 框架**：Model-Update-View 模式
-2. **lipgloss 样式**：美化终端输出
-3. **事件处理**：键盘输入、窗口大小变化
+1. **优先级系统**：不同来源的 Prompt 有不同优先级
+2. **动态组合**：根据条件组装 Prompt
+3. **缓存边界**：区分静态和动态部分
 
 ## 下一课
-
-[s09-prompt-system](../s09-prompt-system) - Prompt 系统
+[s10-coordinator](../s10-coordinator) - 多 Agent 协调

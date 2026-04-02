@@ -1,87 +1,60 @@
-# s05-agent-loop: Agent 循环
+# s06: 多工具系统
 
-> 没有 Agent Loop，工具只是摆设
+> _"多工具并行，效率翻倍"_
 
-## 目标
-
-理解 Agent 的核心循环：LLM 决定调用工具 → 执行 → 结果反馈 → 继续推理。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────────────┐
-│                   Agent Loop                         │
-│                                                     │
-│   messages[] ──► LLM ──► response                   │
-│                      │                              │
-│               stop_reason?                          │
-│              /            \                         │
-│         tool_calls        text                      │
-│             │              │                         │
-│             ▼              ▼                         │
-│       Execute Tools    Return to User               │
-│       Append Results                                │
-│             │                                        │
-│             └──────────► messages[]                 │
-│                           (loop)                    │
-└─────────────────────────────────────────────────────┘
-```
-
-## 代码结构
-
-```go
-// Agent 循环
-func (a *Agent) Run(ctx context.Context, prompt string) (string, error) {
-    messages := []Message{{Role: "user", Content: prompt}}
-
-    for i := 0; i < maxIterations; i++ {
-        // 1. 调用 LLM
-        resp := client.CreateMessage(ctx, messages, tools)
-
-        // 2. 检查是否需要工具调用
-        if resp.FinishReason == "tool_calls" {
-            // 3. 执行工具
-            for _, toolCall := range resp.ToolCalls {
-                result := tools[toolCall.Name].Execute(toolCall.Arguments)
-                // 4. 添加结果到消息
-                messages = append(messages, Message{
-                    Role: "tool",
-                    Content: result.Content,
-                })
-            }
-            // 5. 继续循环，让 LLM 处理结果
-            continue
-        }
-
-        // 6. 返回最终响应
-        return resp.Content, nil
-    }
-}
-```
+本课展示如何构建完整的多工具系统，支持并行执行。
 
 ## 运行
-
 ```bash
+cd go/s06-multi-tools
 export OPENAI_API_KEY=your-key
-go run main.go "列出当前目录的文件"
-
-# 交互模式
 go run main.go
 ```
 
+## 代码结构
+```
+s06-multi-tools/
+├── main.go        # 主程序
+├── agent.go       # Agent 结构
+├── registry.go    # 工具注册表
+└── README.md       # 本文件
+```
+
+## 核心代码
+```go
+// 并行执行工具
+func (r *ToolRegistry) ExecuteParallel(ctx, calls []ToolCall) map[string]*ToolResult {
+    results := make(map[string]*ToolResult)
+    var wg sync.WaitGroup
+    
+    for _, call := range calls {
+        wg.Add(1)
+        go func(c ToolCall) {
+            defer wg.Done()
+            tool := r.tools[c.Name]
+            result := tool.Execute(ctx, c.Arguments)
+            results[c.ID] = result
+        }(call)
+    }
+    
+    wg.Wait()
+    return results
+}
+```
+
+## 已实现工具
+| 工具 | 功能 |
+|------|------|
+| bash | 执行 shell 命令 |
+| read | 读取文件 |
+| write | 写入文件 |
+| glob | 搜索文件 |
+| grep | 搜索文本 |
+
 ## 学习要点
-
-1. **ReAct 模式**：Reasoning + Acting，边思考边行动
-2. **工具调用检测**：`stop_reason == "tool_calls"`
-3. **消息历史**：工具结果追加到历史，LLM 可以看到执行结果
-
-## 关键判断
-
-| Finish Reason | 行为 |
-|---------------|------|
-| `tool_calls` | 执行工具，继续循环 |
-| `stop` | 返回最终响应 |
+1. **注册表增强**：线程安全的工具管理
+2. **并行执行**：goroutine + WaitGroup
+3. **结果聚合**：收集所有工具执行结果
 
 ## 下一课
-
-[s06-multi-tools](../s06-multi-tools) - 多工具系统与并行执行
+[s07-config](../s07-config) - 配置管理

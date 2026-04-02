@@ -1,49 +1,48 @@
-# s09-prompt-system: Prompt 系统
+# s10: 多 Agent 协调
 
-> Prompt 要分层，缓存边界要清晰
+> _"任务太复杂，一个 Agent 干不完"_
 
-## 目标
-
-理解 Agent 的 System Prompt 管理系统：优先级 + 动态组合 + 缓存边界。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────┐
-│            Prompt 优先级系统                 │
-│                                             │
-│  0 - Override    (强制覆盖)                  │
-│  1 - Coordinator (协调模式)                  │
-│  2 - Agent       (子 Agent)                 │
-│  3 - Custom      (用户自定义)                │
-│  4 - Default     (默认)                      │
-│                                             │
-│  数值越小，优先级越高                         │
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│            缓存边界                          │
-│                                             │
-│  [静态部分 - 可缓存]                         │
-│  ...                                        │
-│  __SYSTEM_PROMPT_DYNAMIC_BOUNDARY__         │
-│  [动态部分 - 不缓存]                         │
-│  ...                                        │
-└─────────────────────────────────────────────┘
-```
+本课展示如何协调多个 Agent 并行工作。
 
 ## 运行
-
 ```bash
+cd go/s10-coordinator
 go run main.go
 ```
 
-## 学习要点
+## 代码结构
+```
+s10-coordinator/
+├── main.go        # 主程序
+└── README.md       # 本文件
+```
 
-1. **优先级系统**：不同来源的 Prompt 有不同优先级
-2. **动态组合**：根据条件动态组装 Prompt
-3. **缓存边界**：区分静态和动态部分，优化 API 缓存
+## 核心代码
+```go
+// Agent Worker
+type AgentWorker struct {
+    ID     string
+    Role   string
+    tasks  chan Task
+    results chan TaskResult
+}
+
+// Coordinator
+type Coordinator struct {
+    workers map[string]*AgentWorker
+    mu      sync.RWMutex
+}
+
+func (c *Coordinator) Run() map[string]TaskResult {
+    // 分发任务给 Workers
+    // 收集结果
+}
+```
+
+## 学习要点
+1. **Worker Pool**：多个 Agent 并行处理
+2. **任务分发**：轮询或智能路由
+3. **结果聚合**：收集所有 Worker 结果
 
 ## 下一课
-
-[s10-coordinator](../s10-coordinator) - 多 Agent 协调
+[s11-memory](../s11-memory) - 记忆系统

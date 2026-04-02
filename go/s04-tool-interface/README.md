@@ -1,75 +1,54 @@
-# s04-tool-interface: 工具接口定义
+# s05: Agent 循环
 
-> 加一个工具，只加一个实现
+> _"没有 Agent Loop，工具只是摆设"_
 
-## 目标
-
-理解 Agent 的工具系统设计，掌握 Tool 接口的定义和实现。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────┐
-│              Tool 接口                       │
-│                                             │
-│  Name() string                              │
-│  Description() string                       │
-│  InputSchema() map[string]interface{}       │
-│  Execute(ctx, input) (*ToolResult, error)   │
-└─────────────────┬───────────────────────────┘
-                  │
-      ┌───────────┼───────────┐
-      │           │           │
-      ▼           ▼           ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│  Bash    │ │   Read   │ │  Write   │
-│  Tool    │ │   Tool   │ │   Tool   │
-└──────────┘ └──────────┘ └──────────┘
-```
-
-## 代码结构
-
-```go
-// 1. 定义接口
-type Tool interface {
-    Name() string
-    Description() string
-    InputSchema() map[string]interface{}
-    Execute(ctx context.Context, input json.RawMessage) (*ToolResult, error)
-}
-
-// 2. 实现工具
-type BashTool struct{}
-
-func (t *BashTool) Name() string { return "bash" }
-func (t *BashTool) Description() string { return "执行 shell 命令" }
-func (t *BashTool) InputSchema() map[string]interface{} { ... }
-func (t *BashTool) Execute(ctx, input) (*ToolResult, error) { ... }
-
-// 3. 注册表
-registry.Register(NewBashTool())
-```
+本课展示如何实现 Agent 循环（ReAct），让 LLM 决定何时调用工具。
 
 ## 运行
-
 ```bash
+cd go/s05-agent-loop
+export OPENAI_API_KEY=your-key
 go run main.go
 ```
 
+## 代码结构
+```
+s05-agent-loop/
+├── main.go      # 主程序
+├── agent.go     # Agent 结构
+└── README.md     # 本文件
+```
+
+## 核心代码
+```go
+// Agent 循环
+func (a *Agent) Run(ctx, prompt) (string, error) {
+    messages := []Message{{Role: "user", Content: prompt}}
+    
+    for i := 0; i < maxIterations; i++ {
+        // 1. 调用 LLM
+        response := a.client.CreateMessage(ctx, messages, tools)
+        
+        // 2. 检查是否需要工具
+        if response.FinishReason == "tool_calls" {
+            // 3. 执行工具
+            for _, call := response.ToolCalls {
+                result := a.tools[call.Name].Execute(call.Arguments)
+                messages = append(messages, ToolResult(call.ID, result))
+            }
+            continue  // 继续循环
+        }
+        
+        // 4. 返回最终响应
+        return response.Content
+    }
+}
+```
+
 ## 学习要点
-
-1. **接口抽象**：Tool 接口让所有工具统一管理
-2. **JSON Schema**：定义参数结构，LLM 可以理解如何调用
-3. **注册表模式**：工具注册后可通过名称获取
-
-## Tool 设计原则
-
-| 原则 | 说明 |
-|------|------|
-| 原子化 | 每个工具只做一件事 |
-| 可组合 | 多个工具可以组合完成复杂任务 |
-| 描述清晰 | Description 让 LLM 理解何时使用 |
+1. **ReAct 模式**：Reasoning + Acting
+2. **工具调用检测**：`finish_reason == "tool_calls"`
+3. **消息历史**：工具结果追加到历史
 
 ## 下一课
-
-[s05-agent-loop](../s05-agent-loop) - Agent 循环：让 LLM 决定何时调用工具
+[s06-multi-tools](../s06-multi-tools) - 多工具系统

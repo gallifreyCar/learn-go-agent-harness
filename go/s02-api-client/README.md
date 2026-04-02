@@ -1,71 +1,55 @@
-# s02-api-client: API 客户端抽象
+# s03: 流式响应
 
-> 加一个 Provider，只加一个实现
+> _"流式输出，体验更好"_
 
-## 目标
+本课展示如何处理流式响应（SSE），实现实时输出效果。
 
-理解如何抽象 LLM API，实现 Provider 接口，支持多后端。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────┐
-│            Provider 接口                 │
-│                                         │
-│  Name() string                          │
-│  Complete(ctx, messages) (string, error)│
-│  Models() []string                      │
-└─────────────────┬───────────────────────┘
-                  │
-      ┌───────────┼───────────┐
-      │           │           │
-      ▼           ▼           ▼
-┌──────────┐ ┌──────────┐ ┌──────────┐
-│ OpenAI   │ │ Anthropic│ │  Ollama  │
-│ Provider │ │ Provider │ │ Provider │
-└──────────┘ └──────────┘ └──────────┘
+## 运行
+```bash
+cd go/s03-streaming
+export OPENAI_API_KEY=your-key
+go run main.go
 ```
 
 ## 代码结构
-
-```go
-// 1. 定义接口
-type Provider interface {
-    Name() string
-    Complete(ctx context.Context, messages []Message) (string, error)
-    Models() []string
-}
-
-// 2. 实现各 Provider
-type OpenAIProvider struct { ... }
-type AnthropicProvider struct { ... }
-type OllamaProvider struct { ... }
-
-// 3. 工厂函数
-func CreateProvider(name string, model string) (Provider, error)
+```
+s03-streaming/
+├── main.go       # 主程序
+├── stream.go      # 流式处理
+└── README.md      # 本文件
 ```
 
-## 运行
+## 核心代码
+```go
+// 流式事件
+type StreamEvent struct {
+    Type    string  // "content", "done", "error"
+    Content string
+}
 
-```bash
-# OpenAI
-go run main.go -provider openai -model gpt-4o-mini
+// 流式客户端
+func (c *StreamClient) CompleteStream(ctx, messages) <-chan StreamEvent {
+    events := make(chan StreamEvent, 100)
+    
+    go func() {
+        defer close(events)
+        // 解析 SSE 流...
+    }()
+    
+    return events
+}
 
-# Anthropic
-export ANTHROPIC_API_KEY=your-key
-go run main.go -provider anthropic -model claude-sonnet-4-20250514
-
-# Ollama (本地)
-ollama serve
-go run main.go -provider ollama -model llama3
+// 消费
+for event := range client.CompleteStream(ctx, messages) {
+    fmt.Print(event.Content)  // 实时输出
+}
 ```
 
 ## 学习要点
 
-1. **接口抽象**：Provider 接口屏蔽不同 API 的差异
-2. **工厂模式**：CreateProvider 根据名称创建实例
-3. **API 差异**：OpenAI vs Anthropic vs Ollama 的请求格式不同
+1. **SSE 格式**：`data: {...}` 形式
+2. **Go Channel**：goroutine + channel 实现异步
+3. **实时输出**：收到即打印
 
 ## 下一课
-
-[s03-streaming](../s03-streaming) - 流式响应处理
+[s04-tool-interface](../s04-tool-interface) - 工具接口

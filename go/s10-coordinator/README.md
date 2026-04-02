@@ -1,48 +1,51 @@
-# s10-coordinator: 多 Agent 协调
+# s11: 记忆系统
 
-> 任务太复杂，一个 Agent 干不完
+> _"Agent 要有记忆，不然每次从零开始"_
 
-## 目标
-
-理解如何协调多个 Agent 并行工作：Coordinator + Workers + 任务分发。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────────────┐
-│                   Coordinator                        │
-│                                                     │
-│  Task Queue ──► Dispatch ──► Workers                │
-│                    │                                │
-│         ┌─────────┼─────────┐                      │
-│         ▼         ▼         ▼                      │
-│   ┌──────────┐ ┌──────────┐ ┌──────────┐          │
-│   │Researcher│ │  Coder   │ │ Reviewer │          │
-│   └──────────┘ └──────────┘ └──────────┘          │
-│                                                     │
-│              Results Aggregator                    │
-└─────────────────────────────────────────────────────┘
-```
-
-## 四阶段工作流
-
-1. **Research** - Workers 并行研究
-2. **Synthesis** - Coordinator 综合结果
-3. **Implementation** - Workers 并行实现
-4. **Verification** - Workers 验证结果
+本课展示如何实现 Agent 的记忆存储和检索。
 
 ## 运行
-
 ```bash
+cd go/s11-memory
 go run main.go
 ```
 
-## 学习要点
+## 代码结构
+```
+s11-memory/
+├── main.go      # 主程序
+└── README.md     # 本文件
+```
 
-1. **Worker Pool**：多个 Agent 并行处理
-2. **任务分发**：轮询或智能路由
-3. **结果聚合**：收集所有 Worker 结果
+## 核心代码
+```go
+// 记忆类型
+type MemoryType string
+
+const (
+    MemoryTypeConversation MemoryType = "conversation"
+    MemoryTypeFact         MemoryType = "fact"
+    MemoryTypeSkill        MemoryType = "skill"
+)
+
+// 记忆存储
+type MemoryStore interface {
+    Save(memory *Memory) error
+    Get(id string) (*Memory, error)
+    Search(query string, limit int) ([]*Memory, error)
+}
+
+// 记忆管理器
+type MemoryManager struct {
+    shortTerm MemoryStore
+    longTerm  MemoryStore
+}
+```
+
+## 学习要点
+1. **记忆类型**：对话、事实、技能
+2. **存储抽象**：MemoryStore 接口
+3. **持久化**：文件存储
 
 ## 下一课
-
-[s11-memory](../s11-memory) - 记忆系统
+[s12-mcp](../s12-mcp) - MCP 协议

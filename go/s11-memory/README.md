@@ -1,43 +1,56 @@
-# s11-memory: 记忆系统
+# s12: MCP 协议
 
-> Agent 要有记忆，不然每次从零开始
+> _"外部工具要标准，MCP 是方向"_
 
-## 目标
-
-理解 Agent 的记忆存储和检索：短期记忆 + 长期记忆 + 持久化。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────┐
-│            记忆类型                          │
-│                                             │
-│  Conversation - 对话记忆（短期）             │
-│  Fact         - 事实记忆（长期）             │
-│  Skill        - 技能记忆（长期）             │
-│  Context      - 上下文记忆（临时）           │
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│            存储层级                          │
-│                                             │
-│  Short-term (InMemory) - 会话级             │
-│  Long-term (FileStore) - 持久化             │
-└─────────────────────────────────────────────┘
-```
+本课展示 MCP (Model Context Protocol) 协议的基本实现。
 
 ## 运行
-
 ```bash
+cd go/s12-mcp
 go run main.go
 ```
 
+## 代码结构
+```
+s12-mcp/
+├── main.go      # 主程序
+└── README.md     # 本文件
+```
+
+## 核心代码
+```go
+// JSON-RPC 消息
+type JSONRPCMessage struct {
+    JSONRPC string          `json:"jsonrpc"`
+    ID      interface{}   `json:"id,omitempty"`
+    Method  string         `json:"method,omitempty"`
+    Params  json.RawMessage `json:"params,omitempty"`
+}
+
+// MCP Client
+type MCPClient struct {
+    cmd    *exec.Cmd
+    stdin  io.WriteCloser
+    stdout *bufio.Reader
+}
+
+func (c *MCPClient) Initialize(ctx) (*InitializeResult, error)
+func (c *MCPClient) ListTools(ctx) ([]MCPTool, error)
+func (c *MCPClient) CallTool(ctx, name string, args map[string]interface{}) (*CallToolResult, error)
+```
+
 ## 学习要点
+1. **JSON-RPC 2.0**：请求-响应模式
+2. **工具发现**：动态获取可用工具
+3. **标准化集成**：任何 MCP Server 都能用相同方式连接
 
-1. **记忆类型**：不同类型有不同的生命周期
-2. **存储抽象**：MemoryStore 接口支持多种实现
-3. **持久化**：重要记忆保存到文件
+## 课程总结
 
-## 下一课
+恭喜完成 12 课学习！你现在理解了：
 
-[s12-mcp](../s12-mcp) - MCP 协议
+- Agent = LLM + Harness = 智能体
+- 工具系统是 Agent 的"双手"
+- 多 Agent 协调实现复杂任务
+- MCP 协议实现标准化集成
+
+**Bash is all you need. Real agents are all the universe needs.**

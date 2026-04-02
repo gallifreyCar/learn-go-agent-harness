@@ -1,59 +1,54 @@
-# s07-config: 配置管理
+# s08: TUI 交互界面
 
-> 配置要灵活，环境变量优先
+> _"界面要好看，bubbletea 是首选"_
 
-## 目标
-
-理解 Agent 的配置系统设计：viper + 环境变量 + 配置文件。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────┐
-│            配置优先级                        │
-│                                             │
-│  1. 代码默认值 (最低)                        │
-│  2. 配置文件 (agent.yaml)                   │
-│  3. 环境变量 (最高)                          │
-│                                             │
-│  OPENAI_API_KEY > config.yaml > default     │
-└─────────────────────────────────────────────┘
-```
-
-## 配置结构
-
-```yaml
-provider: openai
-model: gpt-4o-mini
-
-api_keys:
-  openai: ""
-  anthropic: ""
-
-agent:
-  max_iterations: 10
-  system_prompt: "你是一个有帮助的AI助手。"
-  temperature: 0.7
-
-tools:
-  enabled: [bash, read, write]
-```
+本课展示如何使用 bubbletea 构建终端交互界面。
 
 ## 运行
-
 ```bash
-# 使用默认配置
-go run main.go
-
-# 环境变量覆盖
-AGENT_PROVIDER=anthropic go run main.go
-
-# 使用配置文件
-cp agent.yaml.example agent.yaml
-# 编辑 agent.yaml
+cd go/s08-tui
 go run main.go
 ```
 
-## 下一课
+## 代码结构
+```
+s08-tui/
+├── main.go      # 主程序
+└── README.md     # 本文件
+```
 
-[s08-tui](../s08-tui) - TUI 交互界面
+## 核心代码
+```go
+// Bubbletea Model
+type model struct {
+    messages []Message
+    input    string
+}
+
+// Update
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    switch msg := msg.(type) {
+    case tea.KeyMsg:
+        // 处理键盘输入
+    case tea.WindowSizeMsg:
+        // 处理窗口大小变化
+    }
+}
+
+// View
+func (m model) View() string {
+    // 渲染界面
+}
+```
+
+## 学习要点
+1. **Bubbletea 框架**：Model-Update-View 模式
+2. **lipgloss 样式**：美化终端输出
+3. **事件处理**：键盘输入、窗口大小
+
+## 操作
+- **Enter**: 发送消息
+- **Esc/Ctrl+C**: 退出
+
+## 下一课
+[s09-prompt-system](../s09-prompt-system) - Prompt 系统

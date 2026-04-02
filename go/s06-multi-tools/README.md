@@ -1,75 +1,50 @@
-# s06-multi-tools: 多工具系统
+# s07: 配置管理
 
-> 多工具并行，效率翻倍
+> _"配置要灵活，环境变量优先"_
 
-## 目标
-
-理解完整的多工具系统设计：工具注册表 + 并行执行 + 结果聚合。
-
-## 核心概念
-
-```
-┌─────────────────────────────────────────────────────┐
-│              工具注册表                              │
-│                                                     │
-│  Register(tool) ──► tools map[string]Tool          │
-│                                                     │
-│  GetToolsForAPI() ──► OpenAI tools 格式            │
-│                                                     │
-│  ExecuteParallel(calls) ──► map[ID]Result          │
-└─────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────┐
-│              并行执行                                │
-│                                                     │
-│  ToolCalls: [bash, read, glob]                     │
-│              │                                      │
-│      ┌───────┼───────┐                             │
-│      ▼       ▼       ▼                             │
-│   goroutine goroutine goroutine                    │
-│      │       │       │                             │
-│      └───────┴───────┘                             │
-│              │                                      │
-│              ▼                                      │
-│      sync.WaitGroup 聚合                            │
-│              │                                      │
-│              ▼                                      │
-│      map[callID]Result                              │
-└─────────────────────────────────────────────────────┘
-```
-
-## 已实现工具
-
-| 工具 | 功能 | 使用场景 |
-|------|------|---------|
-| bash | 执行 shell 命令 | 系统操作、文件管理 |
-| read | 读取文件 | 查看代码、配置文件 |
-| write | 写入文件 | 创建、修改文件 |
-| glob | 搜索文件 | 查找特定类型文件 |
-| grep | 搜索文本 | 代码搜索、日志查找 |
+本课展示如何使用 viper 管理配置。
 
 ## 运行
-
 ```bash
-export OPENAI_API_KEY=your-key
+cd go/s07-config
 go run main.go
 ```
 
+## 代码结构
+```
+s07-config/
+├── main.go      # 主程序
+└── README.md     # 本文件
+```
+
+## 核心代码
+```go
+// 配置结构
+type Config struct {
+    Provider string
+    Model    string
+    APIKeys  APIKeysConfig
+    Agent   AgentConfig
+}
+
+// 初始化
+viper.SetDefault("provider", "openai")
+viper.SetEnvPrefix("AGENT")
+viper.AutomaticEnv()
+
+// 环境变量覆盖
+// AGENT_PROVIDER=anthropic go run main.go
+```
+
+## 配置优先级
+1. 代码默认值（最低）
+2. 配置文件
+3. 环境变量（最高）
+
 ## 学习要点
-
-1. **注册表模式**：统一管理所有工具
-2. **并行执行**：多个工具同时运行，提升效率
-3. **线程安全**：sync.RWMutex 保护并发访问
-4. **结果聚合**：WaitGroup 等待所有工具完成
-
-## 与 s05 的对比
-
-| 特性 | s05 | s06 |
-|------|-----|-----|
-| 工具数量 | 1 个 | 5 个 |
-| 执行方式 | 串行 | 并行 |
-| 注册表 | 简单 map | 线程安全 Registry |
+1. **viper 库**：配置管理
+2. **环境变量**：优先级最高
+3. **配置文件**：YAML/JSON 支持
 
 ## 下一课
-
-[s07-config](../s07-config) - 配置管理系统
+[s08-tui](../s08-tui) - TUI 界面
