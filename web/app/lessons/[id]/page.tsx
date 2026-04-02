@@ -33,7 +33,7 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
   const nextLesson = lessons.find((l) => l.id === lesson.nextLesson)
 
   return (
-    <div className="max-w-6xl mx-auto py-8">
+    <div className="max-w-5xl mx-auto py-8">
       {/* Navigation */}
       <div className="flex items-center justify-between mb-6">
         <Link href="/lessons" className="text-purple-600 hover:underline">
@@ -68,52 +68,94 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
           <h1 className="text-3xl font-bold">{lesson.title}</h1>
         </div>
         <p className="text-xl text-gray-600 mb-2">{lesson.description}</p>
-        <p className="text-gray-500 italic">"{lesson.motto}"</p>
+        <p className="text-gray-500 italic text-lg">"{lesson.motto}"</p>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column */}
-        <div className="space-y-6">
-          {/* Concepts */}
-          <div className="bg-white rounded-lg border p-4">
-            <h3 className="font-semibold mb-3">核心概念</h3>
-            <ul className="space-y-2">
-              {lesson.concepts.map((concept) => (
-                <li key={concept} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                  <span>{concept}</span>
-                </li>
-              ))}
-            </ul>
+      {/* Architecture Diagram */}
+      {lesson.architectureDiagram && (
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">架构图</h2>
+          <div className="bg-gray-900 text-gray-100 p-6 rounded-lg font-mono text-sm overflow-x-auto">
+            <pre className="whitespace-pre">{lesson.architectureDiagram}</pre>
           </div>
+        </div>
+      )}
 
-          {/* Key Points */}
+      {/* Core Code Snippet */}
+      {lesson.coreCodeSnippet && (
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">核心代码</h2>
+          <div className="bg-gray-900 text-gray-100 p-6 rounded-lg overflow-x-auto">
+            <pre className="text-sm font-mono text-green-400 whitespace-pre-wrap">{lesson.coreCodeSnippet}</pre>
+          </div>
+        </div>
+      )}
+
+      {/* Code Explanation */}
+      {lesson.codeExplanation && (
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-3">代码解释</h2>
           <div className="bg-white rounded-lg border p-4">
-            <h3 className="font-semibold mb-3">学习要点</h3>
             <ul className="space-y-3">
-              {lesson.keyPoints.map((point, i) => (
-                <li key={i} className="text-sm text-gray-700">
-                  {point}
+              {lesson.codeExplanation.map((point, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="w-6 h-6 flex items-center justify-center bg-purple-100 text-purple-600 rounded-full text-sm font-medium shrink-0">
+                    {i + 1}
+                  </span>
+                  <span className="text-gray-700">{point}</span>
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* Run Command */}
-          <div className="bg-gray-900 rounded-lg p-4">
-            <h3 className="font-semibold mb-3 text-white">运行方式</h3>
-            <pre className="text-green-400 text-sm overflow-x-auto">{lesson.runCommand}</pre>
-          </div>
         </div>
+      )}
 
-        {/* Right Column - Code Structure */}
+      {/* Concepts & Key Points Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Concepts */}
         <div className="bg-white rounded-lg border p-4">
-          <h3 className="font-semibold mb-3">代码结构</h3>
-          <div className="bg-gray-50 p-3 rounded text-sm font-mono">
-            <pre>{lesson.codeStructure || `${lesson.id}/\n├── main.go      # 主程序\n└── README.md    # 课程说明`}</pre>
-          </div>
+          <h3 className="font-semibold mb-3">核心概念</h3>
+          <ul className="space-y-2">
+            {lesson.concepts.map((concept) => (
+              <li key={concept} className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                <span>{concept}</span>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        {/* Key Points */}
+        <div className="bg-white rounded-lg border p-4">
+          <h3 className="font-semibold mb-3">学习要点</h3>
+          <ul className="space-y-2">
+            {lesson.keyPoints.map((point, i) => (
+              <li key={i} className="text-sm text-gray-700">
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Run Command */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-3">运行方式</h2>
+        <div className="bg-gray-900 rounded-lg p-4">
+          <pre className="text-green-400 text-sm font-mono">{lesson.runCommand}</pre>
+        </div>
+      </div>
+
+      {/* GitHub Link */}
+      <div className="mb-8">
+        <a
+          href={`https://github.com/gallifreyCar/learn-go-agent-harness/tree/main/go/${lesson.id}-${lesson.title.toLowerCase().replace(/ /g, '-')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-purple-600 hover:underline"
+        >
+          查看完整代码 → GitHub
+        </a>
       </div>
 
       {/* Next Lesson Link */}
