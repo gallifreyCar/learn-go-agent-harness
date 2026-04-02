@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { lessons, getPhaseLessons, Lesson } from '@/lib/lessons'
+import { lessons, getPhaseLessons } from '@/lib/lessons'
+import { AgentLoopAnimation, InteractiveArchitecture, LessonProgress } from '@/components/Interactive'
 
 const phaseColors: Record<string, string> = {
   basics: 'bg-green-100 text-green-800 border-green-200',
@@ -19,7 +20,7 @@ export default function HomePage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Hero */}
-      <section className="text-center mb-16">
+      <section className="text-center mb-16 py-8">
         <h1 className="text-5xl font-bold mb-4">
           <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             Learn Go Agent Harness
@@ -28,10 +29,13 @@ export default function HomePage() {
         <p className="text-xl text-gray-600 mb-4">
           从零构建 AI Agent 系统 - 12 课递进式教程
         </p>
+        <p className="text-gray-500 mb-6">
+          用 Go 语言实现类似 Claude Code 的智能体系统
+        </p>
         <div className="flex gap-4 justify-center">
           <Link
             href="/lessons"
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:opacity-90 transition shadow-lg"
           >
             开始学习
           </Link>
@@ -46,22 +50,60 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Agent Definition */}
-      <section className="mb-16 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">Agent 定义</h2>
-        <div className="text-lg text-gray-700 mb-4">
-          <strong>Agent = LLM + Harness = 智能体</strong>
-        </div>
-        <div className="font-mono bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm">
-          <pre>{`Agent = 模型（推理、决策） + Harness（感知、行动）
+      {/* Progress */}
+      <LessonProgress />
 
-Agent = LLM（大脑） + Harness（身体）
-          = 完整的智能体`}</pre>
+      {/* Agent Definition */}
+      <section className="mb-12">
+        <div className="bg-gradient-to-r from-gray-50 to-purple-50 p-6 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Agent = LLM + Harness</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-gray-700 mb-4">
+                <strong>LLM（模型）</strong> 是大脑，负责推理和决策。<br/>
+                <strong>Harness（框架）</strong> 是身体，负责感知和行动。
+              </p>
+              <p className="text-gray-600 text-sm">
+                本教程教你构建 Harness：工具系统、记忆管理、多 Agent 协调、MCP 协议等。
+              </p>
+            </div>
+            <div className="font-mono bg-gray-900 p-4 rounded-lg text-sm text-gray-100">
+              <pre>{`// Agent 的本质
+type Agent struct {
+    LLM     Provider   // 大脑：推理决策
+    Tools   []Tool     // 双手：执行操作
+    Memory  MemoryStore// 记忆：上下文
+    Loop    AgentLoop  // 循环：持续运行
+}
+
+func (a *Agent) Run(task string) {
+    for {
+        response := a.LLM.Decide(a.context)
+        if response.NeedTool {
+            result := a.Tools.Execute(response.ToolCall)
+            a.Memory.Save(result)
+        } else {
+            return response.Answer
+        }
+    }
+}`}</pre>
+            </div>
+          </div>
         </div>
       </section>
 
+      {/* Interactive Architecture */}
+      <section className="mb-12">
+        <InteractiveArchitecture />
+      </section>
+
+      {/* Agent Loop Animation */}
+      <section className="mb-12">
+        <AgentLoopAnimation />
+      </section>
+
       {/* Course Grid */}
-      <section className="mb-16">
+      <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">课程大纲</h2>
 
         {(['basics', 'core', 'polish', 'advanced'] as const).map((phase) => (
@@ -74,7 +116,7 @@ Agent = LLM（大脑） + Harness（身体）
                 <Link
                   key={lesson.id}
                   href={`/lessons/${lesson.id}`}
-                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-lg transition"
+                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className={`text-sm font-medium px-2 py-1 rounded ${phaseColors[lesson.phase]}`}>
@@ -91,40 +133,21 @@ Agent = LLM（大脑） + Harness（身体）
         ))}
       </section>
 
-      {/* Architecture Diagram */}
-      <section className="mb-16">
-        <h2 className="text-2xl font-bold mb-4">架构概览</h2>
-        <div className="bg-gray-900 text-gray-100 p-6 rounded-lg font-mono text-sm overflow-x-auto">
-          <pre>{`
-┌─────────────────────────────────────────────────────┐
-│                   Agent Loop                         │
-│                                                     │
-│   messages[] ──► LLM ──► response                   │
-│                      │                              │
-│               stop_reason?                          │
-│              /            \                         │
-│         tool_calls        text                      │
-│             │              │                         │
-│             ▼              ▼                         │
-│       Execute Tools    Return to User               │
-│       Append Results                                │
-│             │                                        │
-│             └──────────► messages[]                 │
-└─────────────────────────────────────────────────────┘
-          `}</pre>
-        </div>
-      </section>
-
       {/* Lesson Mottos */}
-      <section className="mb-16">
-        <h2 className="text-2xl font-bold mb-6">课程格言</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {lessons.map((lesson) => (
-            <div key={lesson.id} className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <span className="font-bold text-purple-600">{lesson.id}</span>
-                <span className="text-gray-400">|</span>
-                <span className="text-gray-600">{lesson.motto}</span>
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">核心理念</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {lessons.map((lesson, i) => (
+            <div
+              key={lesson.id}
+              className="p-3 bg-gradient-to-br from-gray-50 to-white rounded-lg border hover:shadow-md transition"
+              style={{ animationDelay: `${i * 50}ms` }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 flex items-center justify-center bg-purple-100 text-purple-600 rounded text-xs font-bold">
+                  {i + 1}
+                </span>
+                <span className="text-sm text-gray-600">{lesson.motto}</span>
               </div>
             </div>
           ))}
