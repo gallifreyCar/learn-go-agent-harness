@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # Go 代码测试
+  # Go 代码构建测试
   go-test:
     runs-on: ubuntu-latest
     strategy:
@@ -21,6 +21,7 @@ jobs:
       - name: Build ${{ matrix.lesson }}
         run: |
           cd go/${{ matrix.lesson }}*
+          go mod tidy
           go build -o /dev/null .
 
   # Web 构建
@@ -31,11 +32,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
       - name: Install dependencies
         working-directory: web
-        run: npm ci
+        run: npm install
       - name: Build
         working-directory: web
         run: npm run build
@@ -56,12 +55,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
       - name: Install and Build
         working-directory: web
         run: |
-          npm ci
+          npm install
           npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4
