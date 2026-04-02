@@ -64,13 +64,13 @@ Agent = LLM（大脑） + Harness（身体）
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6">课程大纲</h2>
 
-        {(['basics', 'core', 'polish', 'advanced'] as phase => (
+        {(['basics', 'core', 'polish', 'advanced'] as const).map((phase) => (
           <div key={phase} className="mb-8">
             <h3 className={`text-lg font-semibold mb-4 px-3 py-1 rounded ${phaseColors[phase]}`}>
               {phaseLabels[phase]}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {getPhaseLessons(phase as phase).map((lesson) => (
+              {getPhaseLessons(phase).map((lesson) => (
                 <Link
                   key={lesson.id}
                   href={`/lessons/${lesson.id}`}
