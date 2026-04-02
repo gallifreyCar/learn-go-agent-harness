@@ -47,6 +47,7 @@ yarn-error.log*
 web/.next/
 web/out/
 web/.cache/
+web/*.tsbuildinfo
 
 # Build
 dist/

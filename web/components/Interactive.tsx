@@ -128,7 +128,7 @@ export function InteractiveArchitecture() {
   }
 
   return (
-    <div className="bg-white border rounded-lg p-6">
+    <div className="bg-white border rounded-lg p-6 dark:bg-slate-900 dark:border-slate-700">
       <h3 className="text-lg font-semibold mb-4">Harness 组件（点击查看详情）</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         {Object.keys(components).map((name) => (
@@ -137,8 +137,8 @@ export function InteractiveArchitecture() {
             onClick={() => setActiveComponent(activeComponent === name ? null : name)}
             className={`p-4 rounded-lg border-2 transition-all duration-200 ${
               activeComponent === name
-                ? 'border-purple-500 bg-purple-50 scale-105'
-                : 'border-gray-200 hover:border-purple-300'
+                ? 'border-purple-500 bg-purple-50 scale-105 dark:bg-purple-500/10'
+                : 'border-gray-200 hover:border-purple-300 dark:border-slate-700 dark:hover:border-purple-500'
             }`}
           >
             <div className="text-2xl mb-2">
@@ -153,11 +153,11 @@ export function InteractiveArchitecture() {
       </div>
 
       {activeComponent && (
-        <div className="bg-gray-50 p-4 rounded-lg animate-fadeIn">
-          <p className="text-gray-700 mb-3">{components[activeComponent as keyof typeof components].desc}</p>
+        <div className="bg-gray-50 p-4 rounded-lg animate-fadeIn dark:bg-slate-800">
+          <p className="text-gray-700 mb-3 dark:text-slate-200">{components[activeComponent as keyof typeof components].desc}</p>
           <div className="flex flex-wrap gap-2">
             {components[activeComponent as keyof typeof components].examples.map((ex) => (
-              <span key={ex} className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm">
+              <span key={ex} className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm dark:bg-purple-500/10 dark:text-purple-300">
                 {ex}
               </span>
             ))}
@@ -184,9 +184,9 @@ export function LessonProgress() {
   if (viewed.length === 0) return null
 
   return (
-    <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg mb-8">
+    <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg mb-8 dark:from-purple-500/10 dark:to-blue-500/10 dark:ring-1 dark:ring-slate-700">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700">学习进度</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-slate-200">学习进度</span>
         <span className="text-sm text-purple-600">{viewed.length}/{totalLessons} 课</span>
       </div>
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">

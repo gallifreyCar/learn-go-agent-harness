@@ -51,7 +51,7 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
           {prevLesson && (
             <Link
               href={`/lessons/${prevLesson.id}`}
-              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-900"
             >
               ← {prevLesson.title}
             </Link>
@@ -59,7 +59,7 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
           {nextLesson && (
             <Link
               href={`/lessons/${nextLesson.id}`}
-              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+              className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-900"
             >
               {nextLesson.title} →
             </Link>
@@ -68,7 +68,7 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
       </div>
 
       {/* Progress */}
-      <div className="flex items-center gap-2 mb-6 text-sm text-gray-600">
+      <div className="flex items-center gap-2 mb-6 text-sm text-gray-600 dark:text-slate-300">
         <span>进度: {viewed.length}/12 课</span>
         <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div
@@ -86,8 +86,8 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
           </span>
           <h1 className="text-3xl font-bold">{lesson.title}</h1>
         </div>
-        <p className="text-xl text-gray-600 mb-2">{lesson.description}</p>
-        <p className="text-gray-500 italic text-lg">"{lesson.motto}"</p>
+        <p className="text-xl text-gray-600 dark:text-slate-300 mb-2">{lesson.description}</p>
+        <p className="text-gray-500 dark:text-slate-400 italic text-lg">"{lesson.motto}"</p>
       </div>
 
       {/* Architecture Diagram */}
@@ -107,7 +107,7 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
             <h2 className="text-xl font-semibold">核心代码</h2>
             <button
               onClick={() => handleCopy(lesson.coreCodeSnippet!)}
-              className="text-sm px-3 py-1 border rounded hover:bg-gray-50 transition"
+              className="text-sm px-3 py-1 border rounded hover:bg-gray-50 transition dark:border-slate-700 dark:hover:bg-slate-900"
             >
               {copied ? '已复制 ✓' : '复制代码'}
             </button>
@@ -122,14 +122,14 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
       {lesson.codeExplanation && (
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-3">代码解释</h2>
-          <div className="bg-white rounded-lg border p-4">
+          <div className="bg-white rounded-lg border p-4 dark:bg-slate-900 dark:border-slate-700">
             <ul className="space-y-3">
               {lesson.codeExplanation.map((point, i) => (
                 <li key={i} className="flex items-start gap-3 group">
                   <span className="w-6 h-6 flex items-center justify-center bg-purple-100 text-purple-600 rounded-full text-sm font-medium shrink-0 group-hover:scale-110 transition">
                     {i + 1}
                   </span>
-                  <span className="text-gray-700">{point}</span>
+                  <span className="text-gray-700 dark:text-slate-200">{point}</span>
                 </li>
               ))}
             </ul>
@@ -140,7 +140,7 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
       {/* Concepts & Key Points Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Concepts */}
-        <div className="bg-white rounded-lg border p-4">
+        <div className="bg-white rounded-lg border p-4 dark:bg-slate-900 dark:border-slate-700">
           <h3 className="font-semibold mb-3">核心概念</h3>
           <ul className="space-y-2">
             {lesson.concepts.map((concept) => (
@@ -153,11 +153,11 @@ export default function LessonClient({ lesson }: { lesson: Lesson }) {
         </div>
 
         {/* Key Points */}
-        <div className="bg-white rounded-lg border p-4">
+        <div className="bg-white rounded-lg border p-4 dark:bg-slate-900 dark:border-slate-700">
           <h3 className="font-semibold mb-3">学习要点</h3>
           <ul className="space-y-2">
             {lesson.keyPoints.map((point, i) => (
-              <li key={i} className="text-sm text-gray-700">
+              <li key={i} className="text-sm text-gray-700 dark:text-slate-200">
                 {point}
               </li>
             ))}
