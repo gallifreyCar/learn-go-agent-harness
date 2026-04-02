@@ -1,47 +1,42 @@
 import Link from 'next/link'
-
-const lessons = [
-  { id: 's01', title: 'Hello Agent', phase: '基础', description: '最小可运行 Agent' },
-  { id: 's02', title: 'API Client', phase: '基础', description: '多 Provider 支持' },
-  { id: 's03', title: 'Streaming', phase: '基础', description: '流式响应处理' },
-  { id: 's04', title: 'Tool Interface', phase: '核心', description: '工具接口定义' },
-  { id: 's05', title: 'Agent Loop', phase: '核心', description: 'ReAct 循环' },
-  { id: 's06', title: 'Multi Tools', phase: '核心', description: '多工具系统' },
-  { id: 's07', title: 'Config', phase: '完善', description: '配置管理' },
-  { id: 's08', title: 'TUI', phase: '完善', description: '交互界面' },
-  { id: 's09', title: 'Prompt System', phase: '完善', description: 'Prompt 系统' },
-  { id: 's10', title: 'Coordinator', phase: '高级', description: '多 Agent 协调' },
-  { id: 's11', title: 'Memory', phase: '高级', description: '记忆系统' },
-  { id: 's12', title: 'MCP', phase: '高级', description: 'MCP 协议' },
-]
+import { lessons, getPhaseLessons, Lesson } from '@/lib/lessons'
 
 const phaseColors: Record<string, string> = {
-  '基础': 'bg-green-100 text-green-800',
-  '核心': 'bg-blue-100 text-blue-800',
-  '完善': 'bg-yellow-100 text-yellow-800',
-  '高级': 'bg-purple-100 text-purple-800',
+  basics: 'bg-green-100 text-green-800 border-green-200',
+  core: 'bg-blue-100 text-blue-800 border-blue-200',
+  polish: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  advanced: 'bg-purple-100 text-purple-800 border-purple-200',
 }
 
-export default function Home() {
+const phaseLabels: Record<string, string> = {
+  basics: '基础',
+  core: '核心',
+  polish: '完善',
+  advanced: '高级',
+}
+
+export default function HomePage() {
   return (
-    <main className="min-h-screen p-8">
-      {/* Hero Section */}
-      <section className="max-w-4xl mx-auto text-center mb-16">
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Learn Go Agent Harness
+    <div className="max-w-6xl mx-auto">
+      {/* Hero */}
+      <section className="text-center mb-16">
+        <h1 className="text-5xl font-bold mb-4">
+          <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Learn Go Agent Harness
+          </span>
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-gray-600 mb-4">
           从零构建 AI Agent 系统 - 12 课递进式教程
         </p>
         <div className="flex gap-4 justify-center">
           <Link
-            href="#lessons"
+            href="/lessons"
             className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
           >
             开始学习
           </Link>
           <a
-            href="https://github.com/gallifreycar/learn-go-agent-harness"
+            href="https://github.com/gallifreyCar/learn-go-agent-harness"
             className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
             target="_blank"
             rel="noopener noreferrer"
@@ -51,8 +46,53 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Agent Definition */}
+      <section className="mb-16 p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+        <h2 className="text-2xl font-bold mb-4">Agent 定义</h2>
+        <div className="text-lg text-gray-700 mb-4">
+          <strong>Agent = LLM + Harness = 智能体</strong>
+        </div>
+        <div className="font-mono bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm">
+          <pre>{`Agent = 模型（推理、决策） + Harness（感知、行动）
+
+Agent = LLM（大脑） + Harness（身体）
+          = 完整的智能体`}</pre>
+        </div>
+      </section>
+
+      {/* Course Grid */}
+      <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6">课程大纲</h2>
+
+        {(['basics', 'core', 'polish', 'advanced'] as phase => (
+          <div key={phase} className="mb-8">
+            <h3 className={`text-lg font-semibold mb-4 px-3 py-1 rounded ${phaseColors[phase]}`}>
+              {phaseLabels[phase]}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {getPhaseLessons(phase as phase).map((lesson) => (
+                <Link
+                  key={lesson.id}
+                  href={`/lessons/${lesson.id}`}
+                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-lg transition"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-sm font-medium px-2 py-1 rounded ${phaseColors[lesson.phase]}`}>
+                      {lesson.id.toUpperCase()}
+                    </span>
+                    <h3 className="font-semibold text-lg">{lesson.title}</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm mb-2">{lesson.description}</p>
+                  <p className="text-gray-500 text-xs italic">"{lesson.motto}"</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
       {/* Architecture Diagram */}
-      <section className="max-w-4xl mx-auto mb-16">
+      <section className="mb-16">
         <h2 className="text-2xl font-bold mb-4">架构概览</h2>
         <div className="bg-gray-900 text-gray-100 p-6 rounded-lg font-mono text-sm overflow-x-auto">
           <pre>{`
@@ -62,7 +102,7 @@ export default function Home() {
 │   messages[] ──► LLM ──► response                   │
 │                      │                              │
 │               stop_reason?                          │
-│              /            \\                         │
+│              /            \                         │
 │         tool_calls        text                      │
 │             │              │                         │
 │             ▼              ▼                         │
@@ -75,42 +115,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Lessons Grid */}
-      <section id="lessons" className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold mb-4">课程大纲</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Lesson Mottos */}
+      <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6">课程格言</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {lessons.map((lesson) => (
-            <Link
-              key={lesson.id}
-              href={`/lessons/${lesson.id}`}
-              className="block p-4 border rounded-lg hover:shadow-lg transition hover:border-purple-300"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg font-bold">{lesson.id.toUpperCase()}</span>
-                <span className={`text-xs px-2 py-1 rounded ${phaseColors[lesson.phase]}`}>
-                  {lesson.phase}
-                </span>
+            <div key={lesson.id} className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-purple-600">{lesson.id}</span>
+                <span className="text-gray-400">|</span>
+                <span className="text-gray-600">{lesson.motto}</span>
               </div>
-              <h3 className="font-semibold mb-1">{lesson.title}</h3>
-              <p className="text-sm text-gray-600">{lesson.description}</p>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="max-w-4xl mx-auto mt-16 pt-8 border-t text-center text-gray-500">
-        <p>
-          灵感来源:{' '}
-          <a href="https://claude.ai/code" className="text-purple-600 hover:underline">
-            Claude Code
-          </a>
-          {' '}&{' '}
-          <a href="https://github.com/shareAI-lab/learn-claude-code" className="text-purple-600 hover:underline">
-            learn-claude-code
-          </a>
-        </p>
-      </footer>
-    </main>
+    </div>
   )
 }
