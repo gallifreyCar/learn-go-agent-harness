@@ -12,9 +12,8 @@ export default function LessonsPage() {
         <section key={phase} className="mb-12">
           <h2 className="text-xl font-semibold mb-4 capitalize">
             {phase === 'basics' ? '基础阶段' :
-            {phase === 'core' ? '核心阶段' :
-            {phase === 'polish' ? '完善阶段' :
-            '高级阶段'}
+             phase === 'core' ? '核心阶段' :
+             phase === 'polish' ? '完善阶段' : '高级阶段'}
           </h2>
 
           <div className="grid gap-4">

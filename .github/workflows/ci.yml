@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  GO_VERSION: 1.21
+  GO_VERSION: '1.21'
 
 jobs:
   go-test:
@@ -21,6 +21,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
+          cache: false
 
       - name: Build ${{ matrix.lesson }}
         run: |
@@ -49,5 +50,13 @@ jobs:
         with:
           path: web/out
 
+  deploy:
+    needs: [go-test, web-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

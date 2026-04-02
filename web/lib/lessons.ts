@@ -9,6 +9,7 @@ export interface Lesson {
   concepts: string[];
   runCommand: string;
   keyPoints: string[];
+  codeStructure?: string;
   prevLesson?: string;
   nextLesson?: string;
 }
@@ -113,8 +114,7 @@ export const lessons: Lesson[] = [
     id: 's07',
     title: 'Config',
     phase: 'polish',
-    description: '配置管理系统',
-使用 viper',
+    description: '配置管理系统，使用 viper',
     motto: '配置要灵活，环境变量优先',
     concepts: ['viper 配置', '环境变量', '配置优先级'],
     runCommand: 'cd go/s07-config && go run main.go',
@@ -130,8 +130,7 @@ export const lessons: Lesson[] = [
     id: 's08',
     title: 'TUI',
     phase: 'polish',
-    description: 'TUI 交互界面',
-    使用 bubbletea',
+    description: 'TUI 交互界面，使用 bubbletea',
     motto: '界面要好看，bubbletea 是首选',
     concepts: ['Bubbletea 框架', 'lipgloss 样式', '事件处理'],
     runCommand: 'cd go/s08-tui && go run main.go',
@@ -147,8 +146,7 @@ export const lessons: Lesson[] = [
     id: 's09',
     title: 'Prompt System',
     phase: 'polish',
-    description: 'System Prompt 管理系统',
-优先级设计',
+    description: 'System Prompt 管理系统，优先级设计',
     motto: 'Prompt 要分层，缓存边界要清晰',
     concepts: ['优先级系统', '动态组合', '缓存边界'],
     runCommand: 'cd go/s09-prompt-system && go run main.go',
@@ -196,8 +194,7 @@ export const lessons: Lesson[] = [
     id: 's12',
     title: 'MCP',
     phase: 'advanced',
-    description: 'MCP 协议实现',
-外部工具标准化集成',
+    description: 'MCP 协议实现，外部工具标准化集成',
     motto: '外部工具要标准，MCP 是方向',
     concepts: ['JSON-RPC', '工具发现', '标准化集成'],
     runCommand: 'cd go/s12-mcp && go run main.go',

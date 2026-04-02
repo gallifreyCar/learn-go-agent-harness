@@ -1,5 +1,5 @@
+import Link from 'next/link'
 import { lessons } from '@/lib/lessons'
-import LessonContent from './LessonContent'
 
 const phaseColors: Record<string, string> = {
   basics: 'bg-green-100 text-green-800',
@@ -8,7 +8,8 @@ const phaseColors: Record<string, string> = {
   advanced: 'bg-purple-100 text-purple-800',
 }
 
-export default function LessonPage({ params }: { id: string }) {
+export default async function LessonPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const lesson = lessons.find((l) => l.id === id)
 
   if (!lesson) {
@@ -104,9 +105,7 @@ export default function LessonPage({ params }: { id: string }) {
         <div className="bg-white rounded-lg border p-4">
           <h3 className="font-semibold mb-3">代码结构</h3>
           <div className="bg-gray-50 p-3 rounded text-sm font-mono">
-            <pre>{lesson.codeStructure || `s${lesson.id}/
-├── main.go      # 主程序
-└── README.md    # 课程说明`}</pre>
+            <pre>{lesson.codeStructure || `${lesson.id}/\n├── main.go      # 主程序\n└── README.md    # 课程说明`}</pre>
           </div>
         </div>
       </div>
