@@ -1,8 +1,6 @@
 // s01-hello-agent: 最小可运行的 Agent
 //
 // 目标：理解 Agent 的本质 - 一个调用 LLM API 的循环
-// 这个示例展示最基础的 Agent：发送消息，获取响应
-// 使用标准库 http 客户端，无第三方依赖
 //
 // ┌─────────────────────────────────────────────────────┐
 // │                   Agent = LLM + Loop                 │
@@ -15,81 +13,40 @@
 // │                       +----------------+            │
 // └─────────────────────────────────────────────────────┘
 //
-// 核心模式：
-//   messages = [system prompt]
-//   loop:
-//     append user input
-//     response = call LLM API
-//     append assistant response
-//     print response
+// 文件结构：
+//   main.go    - 程序入口 + 对话循环
+//   message.go - 消息类型定义
+//   client.go  - API 客户端
 //
 // 运行方式：
-//   export OPENAI_API_KEY=your-key
-//   go run main.go
+//   export OPENAI_API_KEY=your-key      # 使用 OpenAI
+//   export DEEPSEEK_API_KEY=your-key    # 使用 DeepSeek
+//   go run .
 package main
 
 import (
 	"bufio"
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
-	"time"
-)
-
-// Message 表示一条对话消息
-type Message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
-
-// ChatRequest 是 OpenAI API 请求结构
-type ChatRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-}
-
-// ChatResponse 是 OpenAI API 响应结构
-type ChatResponse struct {
-	ID      string `json:"id"`
-	Object  string `json:"object"`
-	Created int64  `json:"created"`
-	Model   string `json:"model"`
-	Choices []struct {
-		Index   int `json:"index"`
-		Message struct {
-			Role    string `json:"role"`
-			Content string `json:"content"`
-		} `json:"message"`
-		FinishReason string `json:"finish_reason"`
-	} `json:"choices"`
-	Usage struct {
-		PromptTokens     int `json:"prompt_tokens"`
-		CompletionTokens int `json:"completion_tokens"`
-		TotalTokens      int `json:"total_tokens"`
-	} `json:"usage"`
-}
-
-const (
-	apiURL = "https://api.openai.com/v1/chat/completions"
-	model  = "gpt-4o-mini" // 使用 mini 模型降低成本
 )
 
 func main() {
-	// 1. 从环境变量获取 API Key
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" {
-		fmt.Println("错误: 请设置 OPENAI_API_KEY 环境变量")
-		os.Exit(1)
-	}
-
-	// 2. 创建 HTTP 客户端
-	client := &http.Client{
-		Timeout: 60 * time.Second,
+	// 1. 从环境变量获取 API Key（优先 DeepSeek）
+	var client *Client
+	apiKey := os.Getenv("DEEPSEEK_API_KEY")
+	if apiKey != "" {
+		client = NewDeepSeekClient(apiKey, "deepseek-chat")
+		fmt.Println("使用 DeepSeek API")
+	} else {
+		apiKey = os.Getenv("OPENAI_API_KEY")
+		if apiKey == "" {
+			fmt.Println("错误: 请设置 DEEPSEEK_API_KEY 或 OPENAI_API_KEY 环境变量")
+			os.Exit(1)
+		}
+		client = NewClient(apiKey, "gpt-4o-mini")
+		fmt.Println("使用 OpenAI API")
 	}
 
 	// 3. 初始化消息历史
@@ -123,7 +80,8 @@ func main() {
 		})
 
 		// 调用 API
-		response, err := callAPI(client, apiKey, messages)
+		ctx := context.Background()
+		response, err := client.Complete(ctx, messages)
 		if err != nil {
 			fmt.Printf("API 错误: %v\n", err)
 			continue
@@ -142,58 +100,4 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		fmt.Printf("读取错误: %v\n", err)
 	}
-}
-
-// callAPI 调用 OpenAI Chat Completions API
-func callAPI(client *http.Client, apiKey string, messages []Message) (*ChatResponse, error) {
-	// 构建请求体
-	reqBody := ChatRequest{
-		Model:    model,
-		Messages: messages,
-	}
-
-	bodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("序列化请求失败: %w", err)
-	}
-
-	// 创建请求
-	req, err := http.NewRequestWithContext(
-		context.Background(),
-		http.MethodPost,
-		apiURL,
-		bytes.NewReader(bodyBytes),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("创建请求失败: %w", err)
-	}
-
-	// 设置请求头
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+apiKey)
-
-	// 发送请求
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("请求失败: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// 读取响应
-	respBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("读取响应失败: %w", err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API 返回错误 (status %d): %s", resp.StatusCode, string(respBytes))
-	}
-
-	// 解析响应
-	var chatResp ChatResponse
-	if err := json.Unmarshal(respBytes, &chatResp); err != nil {
-		return nil, fmt.Errorf("解析响应失败: %w", err)
-	}
-
-	return &chatResp, nil
 }

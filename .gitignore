@@ -5,6 +5,24 @@
 *.so
 *.dylib
 
+# Go compiled binaries (course executables)
+go/s01-hello-agent/s01-hello-agent
+go/s02-api-client/s02-api-client
+go/s03-streaming/s03-streaming
+go/s04-tool-interface/s04-tool-interface
+go/s05-agent-loop/s05-agent-loop
+go/s06-multi-tools/s06-multi-tools
+go/s07-config/s07-config
+go/s08-tui/s08-tui
+go/s09-prompt-system/s09-prompt-system
+go/s10-coordinator/s10-coordinator
+go/s11-memory/s11-memory
+go/s12-mcp/s12-mcp
+
+# Agent memory storage
+go/**/agent-memory/
+go/**/*.yaml.example
+
 # Test binary
 *.test
 
