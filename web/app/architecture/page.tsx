@@ -59,10 +59,10 @@ export default function ArchitecturePage() {
             { title: 'Permissions', desc: '沙箱隔离、审批流程、信任边界', icon: '🔒' },
             { title: 'Memory', desc: '短期记忆、长期记忆、持久化存储', icon: '🧠' },
           ].map((item) => (
-            <div key={item.title} className="bg-white rounded-lg border p-4">
+            <div key={item.title} className="bg-white rounded-lg border p-4 dark:bg-slate-900 dark:border-slate-700">
               <div className="text-2xl mb-2">{item.icon}</div>
               <h3 className="font-semibold mb-1">{item.title}</h3>
-              <p className="text-sm text-gray-600">{item.desc}</p>
+              <p className="text-sm text-gray-600 dark:text-slate-300">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -73,13 +73,13 @@ export default function ArchitecturePage() {
         <h2 className="text-2xl font-semibold mb-4">Provider 支持</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { name: 'OpenAI', models: 'gpt-4o, o1, o3', color: 'bg-green-50 border-green-200' },
-            { name: 'Anthropic', models: 'claude-sonnet-4, claude-opus-4', color: 'bg-orange-50 border-orange-200' },
-            { name: 'Ollama', models: 'llama3, qwen2, mistral', color: 'bg-blue-50 border-blue-200' },
+            { name: 'OpenAI', models: 'gpt-4o, o1, o3', color: 'bg-green-50 border-green-200 dark:bg-green-500/10 dark:border-green-500/30' },
+            { name: 'Anthropic', models: 'claude-sonnet-4, claude-opus-4', color: 'bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/30' },
+            { name: 'Ollama', models: 'llama3, qwen2, mistral', color: 'bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30' },
           ].map((provider) => (
             <div key={provider.name} className={`rounded-lg border p-4 ${provider.color}`}>
               <h3 className="font-semibold mb-2">{provider.name}</h3>
-              <p className="text-sm text-gray-600">{provider.models}</p>
+              <p className="text-sm text-gray-600 dark:text-slate-300">{provider.models}</p>
             </div>
           ))}
         </div>

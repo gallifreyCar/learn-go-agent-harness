@@ -26,10 +26,10 @@ export default function HomePage() {
             Learn Go Agent Harness
           </span>
         </h1>
-        <p className="text-xl text-gray-600 mb-4">
+        <p className="text-xl text-gray-600 dark:text-slate-300 mb-4">
           从零构建 AI Agent 系统 - 12 课递进式教程
         </p>
-        <p className="text-gray-500 mb-6">
+        <p className="text-gray-500 dark:text-slate-400 mb-6">
           用 Go 语言实现类似 Claude Code 的智能体系统
         </p>
         <div className="flex gap-4 justify-center">
@@ -41,7 +41,7 @@ export default function HomePage() {
           </Link>
           <a
             href="https://github.com/gallifreyCar/learn-go-agent-harness"
-            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition dark:border-slate-700 dark:hover:bg-slate-900"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -55,15 +55,15 @@ export default function HomePage() {
 
       {/* Agent Definition */}
       <section className="mb-12">
-        <div className="bg-gradient-to-r from-gray-50 to-purple-50 p-6 rounded-lg">
+        <div className="bg-gradient-to-r from-gray-50 to-purple-50 p-6 rounded-lg dark:from-slate-900 dark:to-slate-800 dark:ring-1 dark:ring-slate-700">
           <h2 className="text-2xl font-bold mb-4">Agent = LLM + Harness</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700 dark:text-slate-200 mb-4">
                 <strong>LLM（模型）</strong> 是大脑，负责推理和决策。<br/>
                 <strong>Harness（框架）</strong> 是身体，负责感知和行动。
               </p>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">
                 本教程教你构建 Harness：工具系统、记忆管理、多 Agent 协调、MCP 协议等。
               </p>
             </div>
@@ -116,7 +116,7 @@ func (a *Agent) Run(task string) {
                 <Link
                   key={lesson.id}
                   href={`/lessons/${lesson.id}`}
-                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                  className="block p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:hover:border-purple-500"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className={`text-sm font-medium px-2 py-1 rounded ${phaseColors[lesson.phase]}`}>
@@ -124,8 +124,8 @@ func (a *Agent) Run(task string) {
                     </span>
                     <h3 className="font-semibold text-lg">{lesson.title}</h3>
                   </div>
-                  <p className="text-gray-600 text-sm mb-2">{lesson.description}</p>
-                  <p className="text-gray-500 text-xs italic">"{lesson.motto}"</p>
+                  <p className="text-gray-600 dark:text-slate-300 text-sm mb-2">{lesson.description}</p>
+                  <p className="text-gray-500 dark:text-slate-400 text-xs italic">"{lesson.motto}"</p>
                 </Link>
               ))}
             </div>
@@ -140,14 +140,14 @@ func (a *Agent) Run(task string) {
           {lessons.map((lesson, i) => (
             <div
               key={lesson.id}
-              className="p-3 bg-gradient-to-br from-gray-50 to-white rounded-lg border hover:shadow-md transition"
+              className="p-3 bg-gradient-to-br from-gray-50 to-white rounded-lg border hover:shadow-md transition dark:from-slate-900 dark:to-slate-800 dark:border-slate-700"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-center gap-2">
                 <span className="w-6 h-6 flex items-center justify-center bg-purple-100 text-purple-600 rounded text-xs font-bold">
                   {i + 1}
                 </span>
-                <span className="text-sm text-gray-600">{lesson.motto}</span>
+                <span className="text-sm text-gray-600 dark:text-slate-300">{lesson.motto}</span>
               </div>
             </div>
           ))}
